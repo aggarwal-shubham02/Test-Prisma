@@ -1,0 +1,20 @@
+# vuln_test.py
+# Intentional vulnerable code for AppSec scanner testing
+# DO NOT USE IN PRODUCTION
+import os
+import subprocess
+# Hardcoded AWS secret (fake, for testing)
+AWS_ACCESS_KEY = "AKIAEXAMPLE123456789"
+AWS_SECRET_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+def insecure_command_exec(user_input):
+    # Command Injection vulnerability
+    os.system("ping -c 1 " + user_input)
+def insecure_subprocess(user_input):
+    # Another example of command injection
+    subprocess.call("ls -la " + user_input, shell=True)
+def main():
+    user_input = input("Enter a hostname to ping: ")
+    insecure_command_exec(user_input)
+    insecure_subprocess(user_input)
+if __name__ == "__main__":
+    main()
